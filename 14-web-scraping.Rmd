@@ -1,0 +1,159 @@
+---
+title: "Web Scraping"
+author: "Bastola"
+date: "`r format(Sys.Date(), ' %B %d %Y')`"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      collapse = TRUE, 
+                      comment=NA, 
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.height = 4, fig.width = 6, fig.align='center')
+
+library(tidyverse) 
+library(lubridate)
+library(stringr)
+library(rvest)
+```
+
+
+
+## Your Turn 1
+
+Here's the scraping code we just discussed:
+
+```{r}
+tables <- read_html("http://www.imdb.com/chart/top") %>%
+  html_nodes("table") 
+
+top250 <- html_table(tables[[1]])
+```
+
+
+- Why isn't `top250` data frame we just scraped tidy?
+
+- Use your data-wrangling toolkit to create a tidy data set with columns: `rank`, `title`, `year`, and `imdb.rating`
+
+*Answer:* The scraped data isn't tidy because
+
+- The `Rank & Title` column contains three variables, and extra formatting `\n`.
+
+```{r}
+glimpse(top250)
+```
+
+Tidying the data:
+
+```{r}
+tidy_top250 <- 
+  top250[,2:3] %>%  # Grab the middle two columns, select won't work with duplicate names
+# fill in
+# fill in
+
+tidy_top250
+```
+
+You could also have used regular expressions instead of `parse_number()`
+
+```{r}
+tidy_top250 <- 
+  top250[,2:3] %>%  # Grab the middle two columns, select won't work with duplicate names
+ # fill in
+ # fill in
+
+tidy_top250 # notice that rank and year are still character vectors here
+
+```
+
+---------------------------------------------------
+
+## Your turn 2
+
+
+```{r}
+url <- 'https://www.imdb.com/search/title/?groups=best_picture_winner&sort=year,desc&count=100&view=advanced'
+webpage <- read_html(url)
+
+```
+
+- Use the selector gadget tool to find the CSS for extracting year the movie came out. 
+
+- Tidy the data
+
+  + Using `parse_number()`
+  
+  + Using regex
+
+
+```{r}
+# fill in
+# fill in
+```
+
+
+---------------------------------------------------
+
+## Your turn 3
+
+```{r, echo=FALSE}
+description_data_html <- html_nodes(webpage,'________________') %>% html_text() %>% ________()
+head(description_data_html,3)
+```
+
+---------------------------------------------------
+
+## Your turn 4
+
+- Scrape the names, scores, and years of most popular TV shows on IMDB:
+[www.imdb.com/chart/tvmeter](http://www.imdb.com/chart/tvmeter)
+
+- Create a data frame called `tvshows` with four variables 
+(`rank`, `name`, `score`, `year`)  
+
+Note: 
+
+It's easier to use the SelectorGadget and choose the CSS selectors wisely. Otherwise, you'll have more cleaning to do after scraping.
+
+
+```{r}
+page <- read_html("http://www.imdb.com/chart/tvmeter")
+name <- page %>%
+ # fill in
+# fill in
+
+ranks <- page %>%
+  # fill in
+ # fill in
+
+scores <-  page %>%
+  # fill in
+# fill in
+
+# If you don't use the gadget selector carefully, 
+# there is more string manipulation needed here
+years <- page %>%
+ # fill in
+# fill in
+
+```
+
+
+```{r}
+
+tvshows <- tibble(
+  rank = ranks,
+  name = name,
+  score = scores,
+  year = years
+)
+
+tvshows
+```
+
+
